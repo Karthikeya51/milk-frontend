@@ -1,0 +1,161 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const initialState = {
+  id: null,
+  date: "",
+  shift: "morning",
+  qty: "",
+  fat: "",
+  snf: "",
+  clr: "",
+  rate_per_litre: ""
+};
+
+export default function MilkEntryForm({ editData, setEditData }) {
+  const [form, setForm] = useState(initialState);
+
+  useEffect(() => {
+    if (editData) {
+      setForm({
+        id: editData.id,
+        date: editData.date,
+        shift: editData.shift,
+        qty: editData.qty,
+        fat: editData.fat,
+        snf: editData.snf,
+        clr: editData.clr,
+        rate_per_litre: editData.rate_per_litre
+      });
+    }
+  }, [editData]);
+
+  const amount =
+    form.qty && form.rate_per_litre
+      ? (form.qty * form.rate_per_litre).toFixed(2)
+      : "0.00";
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const resetForm = () => {
+    setForm(initialState);
+    setEditData(null);
+  };
+
+  const submitForm = async () => {
+    try {
+      const payload = {
+        date: form.date,
+        shift: form.shift,
+        qty: parseFloat(form.qty),
+        fat: parseFloat(form.fat),
+        snf: parseFloat(form.snf),
+        clr: parseFloat(form.clr),
+        rate_per_litre: parseFloat(form.rate_per_litre)
+      };
+
+      if (form.id) {
+        await axios.put(
+          `http://127.0.0.1:8000/milk-entry/${form.id}`,
+          payload
+        );
+        alert("Entry updated successfully");
+      } else {
+        await axios.post(
+          "http://127.0.0.1:8000/milk-entry",
+          payload
+        );
+        alert("Entry saved successfully");
+      }
+
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      alert("Error saving entry");
+    }
+  };
+
+  return (
+    <div className="container mt-3">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5 className="card-title mb-3 text-center">
+            {form.id ? "Edit Milk Entry" : "Add Milk Entry"}
+          </h5>
+
+          <input
+            type="date"
+            name="date"
+            className="form-control mb-2"
+            value={form.date}
+            onChange={handleChange}
+          />
+
+          <div className="mb-2 d-flex justify-content-around">
+            <label>
+              <input
+                type="radio"
+                name="shift"
+                value="morning"
+                checked={form.shift === "morning"}
+                onChange={handleChange}
+              />{" "}
+              Morning
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="shift"
+                value="evening"
+                checked={form.shift === "evening"}
+                onChange={handleChange}
+              />{" "}
+              Evening
+            </label>
+          </div>
+
+          {/* Numeric Inputs */}
+          {[
+            { name: "qty", label: "Quantity (litres)" },
+            { name: "fat", label: "Fat" },
+            { name: "snf", label: "SNF" },
+            { name: "clr", label: "CLR" },
+            { name: "rate_per_litre", label: "Rate per litre" }
+          ].map((f) => (
+            <input
+              key={f.name}
+              type="number"
+              inputMode="decimal"
+              name={f.name}
+              placeholder={f.label}
+              className="form-control mb-2"
+              value={form[f.name]}
+              onChange={handleChange}
+            />
+          ))}
+
+          <input
+            className="form-control mb-3"
+            disabled
+            value={`Amount: ₹${amount}`}
+          />
+
+          <div className="d-grid gap-2">
+            <button className="btn btn-primary btn-lg" onClick={submitForm}>
+              {form.id ? "Update Entry" : "Save Entry"}
+            </button>
+
+            {form.id && (
+              <button className="btn btn-secondary" onClick={resetForm}>
+                Cancel
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
