@@ -14,7 +14,7 @@ export default function MilkEntryTable({ onEdit }) {
   const [month, setMonth] = useState("");
 
   const fetchEntries = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/milk-entry");
+    const res = await axios.get("https://milk-backend-6xd2.onrender.com/milk-entry");
     setEntries(res.data);
     setDailyTotal(null);
     setDailyChart([]);
@@ -27,15 +27,15 @@ export default function MilkEntryTable({ onEdit }) {
     }
 
     const entriesRes = await axios.get(
-      `http://127.0.0.1:8000/milk-entry/by-date/${filterDate}`
+      `https://milk-backend-6xd2.onrender.com/milk-entry/by-date/${filterDate}`
     );
 
     const totalRes = await axios.get(
-      `http://127.0.0.1:8000/reports/daily-total/${filterDate}`
+      `https://milk-backend-6xd2.onrender.com/reports/daily-total/${filterDate}`
     );
 
     const chartRes = await axios.get(
-      `http://127.0.0.1:8000/charts/daily/${filterDate}`
+      `https://milk-backend-6xd2.onrender.com/charts/daily/${filterDate}`
     );
 
     setEntries(entriesRes.data);
@@ -47,14 +47,14 @@ export default function MilkEntryTable({ onEdit }) {
     if (!year || !month) return;
 
     const res = await axios.get(
-      `http://127.0.0.1:8000/charts/monthly/${year}/${month}`
+      `https://milk-backend-6xd2.onrender.com/charts/monthly/${year}/${month}`
     );
     setMonthlyChart(res.data);
   };
 
   const deleteEntry = async (id) => {
     if (!window.confirm("Are you sure you want to delete?")) return;
-    await axios.delete(`http://127.0.0.1:8000/milk-entry/${id}`);
+    await axios.delete(`https://milk-backend-6xd2.onrender.com/milk-entry/${id}`);
     fetchEntries();
   };
 
