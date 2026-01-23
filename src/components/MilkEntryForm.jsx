@@ -58,13 +58,13 @@ export default function MilkEntryForm({ editData, setEditData }) {
 
       if (form.id) {
         await axios.put(
-          `http://127.0.0.1:8000/milk-entry/${form.id}`,
+          `https://milk-backend-6xd2.onrender.com/milk-entry/${form.id}`,
           payload
         );
         alert("Entry updated successfully");
       } else {
         await axios.post(
-          "http://127.0.0.1:8000/milk-entry",
+          "https://milk-backend-6xd2.onrender.com/milk-entry",
           payload
         );
         alert("Entry saved successfully");
