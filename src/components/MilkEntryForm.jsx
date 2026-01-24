@@ -9,7 +9,8 @@ const initialState = {
   fat: "",
   snf: "",
   clr: "",
-  rate_per_litre: ""
+  rate_per_litre: "",
+  note: ""
 };
 
 export default function MilkEntryForm({ editData, setEditData }) {
@@ -25,7 +26,8 @@ export default function MilkEntryForm({ editData, setEditData }) {
         fat: editData.fat,
         snf: editData.snf,
         clr: editData.clr,
-        rate_per_litre: editData.rate_per_litre
+        rate_per_litre: editData.rate_per_litre,
+        note: editData.note || ""
       });
     }
   }, [editData]);
@@ -53,7 +55,8 @@ export default function MilkEntryForm({ editData, setEditData }) {
         fat: parseFloat(form.fat),
         snf: parseFloat(form.snf),
         clr: parseFloat(form.clr),
-        rate_per_litre: parseFloat(form.rate_per_litre)
+        rate_per_litre: parseFloat(form.rate_per_litre),
+        note: form.note
       };
 
       
@@ -139,6 +142,15 @@ export default function MilkEntryForm({ editData, setEditData }) {
             disabled
             value={`Amount: ₹${amount}`}
           />
+          <textarea
+            name="note"
+            className="form-control mb-3"
+            rows="3"
+            placeholder="Notes / Remarks (optional)"
+            value={form.note}
+            onChange={handleChange}
+          />
+
 
           <div className="d-grid gap-2">
             <button className="btn btn-primary btn-lg" onClick={submitForm}>
