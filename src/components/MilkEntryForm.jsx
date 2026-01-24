@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 const initialState = {
   id: null,
@@ -56,17 +56,14 @@ export default function MilkEntryForm({ editData, setEditData }) {
         rate_per_litre: parseFloat(form.rate_per_litre)
       };
 
+      
       if (form.id) {
-        await axios.put(
-          `https://milk-backend-6xd2.onrender.com/milk-entry/${form.id}`,
-          payload
-        );
+        // UPDATE
+        await api.put(`/milk-entry/${form.id}`, payload);
         alert("Entry updated successfully");
       } else {
-        await axios.post(
-          "https://milk-backend-6xd2.onrender.com/milk-entry",
-          payload
-        );
+        // CREATE
+        await api.post("/milk-entry", payload);
         alert("Entry saved successfully");
       }
 
