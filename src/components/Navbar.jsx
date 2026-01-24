@@ -1,42 +1,55 @@
-// export default function Navbar({ active, setActive }) {
-//   return (
-//     <nav className="navbar navbar-dark bg-dark px-3">
-//       <span className="navbar-brand">🥛 Milk Manager</span>
-
-//       <div className="d-flex gap-2">
-//         <button
-//           className={`btn btn-sm ${
-//             active === "form" ? "btn-light" : "btn-outline-light"
-//           }`}
-//           onClick={() => setActive("form")}
-//         >
-//           Add
-//         </button>
-
-//         <button
-//           className={`btn btn-sm ${
-//             active === "table" ? "btn-light" : "btn-outline-light"
-//           }`}
-//           onClick={() => setActive("table")}
-//         >
-//           Reports
-//         </button>
-//       </div>
-//     </nav>
-//   );
-// }
-
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-      <span className="navbar-brand">Milk Manager</span>
+      <span className="navbar-brand fw-bold">🥛 Milk Manager</span>
 
-      <div className="navbar-nav">
-        <Link className="nav-link" to="/">Entry</Link>
-        <Link className="nav-link" to="/reports">Reports</Link>
-        <Link className="nav-link" to="/charts">Charts</Link>
+      {/* Mobile toggle */}
+      <button
+        className="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#milkNavbar"
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
+
+      <div className="collapse navbar-collapse" id="milkNavbar">
+        <div className="navbar-nav ms-auto gap-2">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `btn btn-sm ${
+                isActive ? "btn-light" : "btn-outline-light"
+              }`
+            }
+          >
+            Entry
+          </NavLink>
+
+          <NavLink
+            to="/reports"
+            className={({ isActive }) =>
+              `btn btn-sm ${
+                isActive ? "btn-light" : "btn-outline-light"
+              }`
+            }
+          >
+            Reports
+          </NavLink>
+
+          <NavLink
+            to="/charts"
+            className={({ isActive }) =>
+              `btn btn-sm ${
+                isActive ? "btn-light" : "btn-outline-light"
+              }`
+            }
+          >
+            Charts
+          </NavLink>
+        </div>
       </div>
     </nav>
   );

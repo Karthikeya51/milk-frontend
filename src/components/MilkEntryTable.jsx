@@ -360,6 +360,7 @@ export default function MilkEntryTable({ onEdit }) {
               <th>CLR</th>
               <th>Rate</th>
               <th>Amount</th>
+              <th>Note</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -382,6 +383,10 @@ export default function MilkEntryTable({ onEdit }) {
                   <td>{e.clr}</td>
                   <td>{e.rate_per_litre}</td>
                   <td>₹{e.amount}</td>
+                  <td style={{ maxWidth: "200px", whiteSpace: "pre-wrap" }}>
+                    {e.note || "-"}
+                  </td>
+
                   <td>
                     <button
                       className="btn btn-sm btn-warning me-1"
