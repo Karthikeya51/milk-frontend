@@ -13,6 +13,9 @@ export default function Charts() {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [monthlyChart, setMonthlyChart] = useState([]);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
 
   const [xAxis, setXAxis] = useState("");
   const [yAxes, setYAxes] = useState([]);
@@ -42,20 +45,33 @@ export default function Charts() {
   };
 
   // ---------------- MONTHLY ----------------
-  const loadMonthlyData = async () => {
-    if (!year || !month) return;
+  // const loadMonthlyData = async () => {
+  //   if (!year || !month) return;
 
-    const res = await api.get(
-      `/charts/monthly/${year}/${month}`
-    );
+  //   const res = await api.get(
+  //     `/charts/monthly/${year}/${month}`
+  //   );
+  //   setMonthlyChart(res.data);
+  // };
+  const loadMonthlyData = async () => {
+    if (!fromDate || !toDate) return;
+  
+    const res = await api.get("/charts/monthly-range", {
+      params: {
+        from_date: fromDate,
+        to_date: toDate
+      }
+    });
+  
     setMonthlyChart(res.data);
   };
+  
 
   return (
     <div className="container mt-4">
-      <h4 className="mb-3">Charts & Analytics</h4>
-
-      {/* ---------------- DAILY FILTER ---------------- */}
+      <h4 className="mb-3">📊 Charts & Analytics</h4>
+  
+      {/* ================= DAILY FILTER ================= */}
       <div className="row g-2 mb-3">
         <div className="col-12 col-md-4">
           <input
@@ -65,71 +81,85 @@ export default function Charts() {
             onChange={(e) => setFilterDate(e.target.value)}
           />
         </div>
-
+  
         <div className="col-12 col-md-3">
-          <button className="btn btn-secondary w-100" onClick={loadDailyData}>
+          <button
+            className="btn btn-secondary w-100"
+            onClick={loadDailyData}
+            disabled={!filterDate}
+          >
             Load Daily Data
           </button>
         </div>
       </div>
-
-      {/* ---------------- DAILY TOTAL ---------------- */}
+  
+      {/* ================= DAILY TOTAL ================= */}
       {dailyTotal && (
         <div className="alert alert-info">
           <strong>Date:</strong> {dailyTotal.date} <br />
-          <strong>Total Quantity:</strong> {dailyTotal.total_qty} L <br />
-          <strong>Total Amount:</strong> ₹{dailyTotal.total_amount}
+          <strong>Total Quantity:</strong>{" "}
+          {Number(dailyTotal.total_qty).toFixed(2)} L <br />
+          <strong>Total Amount:</strong> ₹
+          {Number(dailyTotal.total_amount).toFixed(2)}
         </div>
       )}
-
-      {/* ---------------- DAILY CHART ---------------- */}
+  
+      {/* ================= DAILY CHART ================= */}
       {dailyChart.length > 0 && (
         <>
           <h5 className="mt-4">Daily Analysis (Shift-wise)</h5>
           <DailyChart data={dailyChart} />
         </>
       )}
-
-      {/* ---------------- MONTHLY FILTER ---------------- */}
-      <div className="row g-2 mt-4">
-        <div className="col-6 col-md-3">
+  
+      <hr className="my-4" />
+  
+      {/* ================= RANGE FILTER (MONTHLY / RANGE) ================= */}
+      <h5 className="mb-2">Range Analysis</h5>
+  
+      <div className="row g-2">
+        <div className="col-12 col-md-4">
           <input
+            type="date"
             className="form-control"
-            placeholder="Year (e.g. 2026)"
-            onChange={(e) => setYear(e.target.value)}
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
           />
         </div>
-
-        <div className="col-6 col-md-3">
+  
+        <div className="col-12 col-md-4">
           <input
+            type="date"
             className="form-control"
-            placeholder="Month (1-12)"
-            onChange={(e) => setMonth(e.target.value)}
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
           />
         </div>
-
-        <div className="col-12 col-md-3">
+  
+        <div className="col-12 col-md-4">
           <button
             className="btn btn-primary w-100"
             onClick={loadMonthlyData}
-            disabled={!year || !month}
+            disabled={!fromDate || !toDate}
           >
-            Load Monthly Chart
+            Generate Range Chart
           </button>
         </div>
       </div>
-
-      {/* ---------------- MONTHLY CHART ---------------- */}
+  
+      {/* ================= MONTHLY / RANGE CHART ================= */}
       {monthlyChart.length > 0 && (
         <>
-          <h5 className="mt-4">Monthly Trend</h5>
+          <h5 className="mt-4">Range Trend</h5>
           <MonthlyChart data={monthlyChart} />
         </>
       )}
-
-      {/* ---------------- DYNAMIC CHART CONFIG ---------------- */}
-      <h5 className="mt-5">Custom Chart Builder</h5>
-
+  
+      <hr className="my-4" />
+  
+      {/* ================= DYNAMIC CHART BUILDER ================= */}
+      <h5 className="mt-3">Custom Chart Builder</h5>
+  
       <ChartConfigurator
         xAxis={xAxis}
         setXAxis={setXAxis}
@@ -138,7 +168,7 @@ export default function Charts() {
         colors={colors}
         setColors={setColors}
       />
-
+  
       {(dailyChart.length > 0 || monthlyChart.length > 0) && (
         <DynamicChart
           data={dailyChart.length ? dailyChart : monthlyChart}
@@ -147,8 +177,8 @@ export default function Charts() {
           colors={colors}
         />
       )}
-
-      {/* ---------------- EXPORT ---------------- */}
+  
+      {/* ================= EXPORT ================= */}
       <a
         href={`${import.meta.env.VITE_API_BASE_URL}/reports/export-excel`}
         className="btn btn-success mt-4"
@@ -157,4 +187,5 @@ export default function Charts() {
       </a>
     </div>
   );
+  
 }
