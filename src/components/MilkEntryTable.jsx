@@ -229,7 +229,17 @@ export default function MilkEntryTable({ onEdit }) {
             </div>
           )}
 
+          
+
       </div>
+      {/* ================= EXPORT ================= */}
+      <a
+              href={`${import.meta.env.VITE_API_BASE_URL}/reports/export-excel`}
+              className="btn btn-success mt-4"
+            >
+              Export to Excel
+            </a>
     </div>
+    
   );
 }

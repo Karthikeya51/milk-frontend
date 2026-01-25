@@ -7,7 +7,7 @@ export default function Footer() {
         borderTop: "1px solid #eaeaea"
       }}
     >
-      🥛 Milk Manager · Designed & Developed by{" "}
+      🥛 Milk Note · Designed & Developed by{" "}
       <strong>Karthikeya & Team</strong> 💙
     </footer>
     
