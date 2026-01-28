@@ -33,7 +33,17 @@ export default function Navbar() {
               `btn btn-sm ${isActive ? "btn-light" : "btn-outline-light"}`
             }
           >
-            Entry
+            Milk Entry
+          </NavLink>
+
+          <NavLink
+            to="/cow-health"
+            onClick={closeNavbar}
+            className={({ isActive }) =>
+              `btn btn-sm ${isActive ? "btn-light" : "btn-outline-light"}`
+            }
+          >
+            🐄 Cow Health
           </NavLink>
 
           <NavLink
@@ -45,6 +55,8 @@ export default function Navbar() {
           >
             Reports
           </NavLink>
+
+          
 
           <NavLink
             to="/charts"
