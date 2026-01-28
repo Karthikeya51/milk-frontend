@@ -53,6 +53,13 @@ export default function CowHealthTable({ entries = [], onEdit, onRefresh }) {
     autoClear();
   };
 
+  const groupedByDate = entries.reduce((acc, item) => {
+    acc[item.date] = acc[item.date] || [];
+    acc[item.date].push(item);
+    return acc;
+  }, {});
+  
+
 
   return (
     <div className="table-responsive mt-3">
@@ -102,73 +109,89 @@ export default function CowHealthTable({ entries = [], onEdit, onRefresh }) {
               </td>
             </tr>
           ) : (
-            entries.map((e) => (
-              <tr key={e.id}>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selected.includes(e.id)}
-                    onChange={() => toggleSelect(e.id)}
-                  />
-                </td>
-                <td>{e.date}</td>
-                <td>{e.shift}</td>
-                <td>{e.cow_name}</td>
-                <td
-                  className={
-                    e.cow_temperature > 39 ? "text-danger fw-bold" : ""
-                  }
-                >
-                  {e.cow_temperature}°
-                </td>
-                <td>{e.milk_given}</td>
-                <td>
-                  {e.medicine_given ? "💊 Yes" : "❌ No"}
-                </td>
-                <td style={{ maxWidth: 200, whiteSpace: "pre-wrap" }}>
-                  {e.note || "-"}
-                </td>
-                <td>
-                <button
-                    className="btn btn-sm btn-warning me-1"
-                    onClick={() => {
-                        onEdit(e);          // set edit data
-                        navigate("/cow-health"); // go to form
-                    }}
+            Object.entries(
+              entries.reduce((acc, curr) => {
+                acc[curr.date] = acc[curr.date] || [];
+                acc[curr.date].push(curr);
+                return acc;
+              }, {})
+            )
+              // ✅ latest date first
+              .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+              .map(([date, rows]) =>
+                rows.map((e) => (
+                  <tr key={e.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(e.id)}
+                        onChange={() => toggleSelect(e.id)}
+                      />
+                    </td>
+
+                    {/* Date column unchanged */}
+                    <td>{e.date}</td>
+                    <td>{e.shift}</td>
+                    <td>{e.cow_name}</td>
+
+                    <td
+                      className={
+                        e.cow_temperature > 39 ? "text-danger fw-bold" : ""
+                      }
                     >
-                    Edit
-                    </button>
+                      {e.cow_temperature}°
+                    </td>
 
+                    <td>{e.milk_given}</td>
 
+                    <td>{e.medicine_given ? "💊 Yes" : "❌ No"}</td>
 
-                  {confirmId === e.id ? (
-                    <>
+                    <td style={{ maxWidth: 200, whiteSpace: "pre-wrap" }}>
+                      {e.note || "-"}
+                    </td>
+
+                    <td>
                       <button
-                        className="btn btn-sm btn-danger me-1"
-                        onClick={() => deleteEntry(e.id)}
+                        className="btn btn-sm btn-warning me-1"
+                        onClick={() => {
+                          onEdit(e);                 // ✅ set edit data
+                          navigate("/cow-health");  // ✅ go to form
+                        }}
                       >
-                        Confirm
+                        Edit
                       </button>
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => setConfirmId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => setConfirmId(e.id)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
+
+                      {confirmId === e.id ? (
+                        <>
+                          <button
+                            className="btn btn-sm btn-danger me-1"
+                            onClick={() => deleteEntry(e.id)}
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => setConfirmId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => setConfirmId(e.id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )
           )}
         </tbody>
+
+
       </table>
 
       {/* Bulk delete */}
