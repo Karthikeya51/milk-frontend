@@ -56,6 +56,13 @@ export default function MilkEntryTable({ entries = [], onEdit, onRefresh }) {
     autoClearMessage();
   };
 
+  const groupedByDate = entries.reduce((acc, item) => {
+    acc[item.date] = acc[item.date] || [];
+    acc[item.date].push(item);
+    return acc;
+  }, {});
+  
+
   return (
     <div className="container mt-4">
       <h4 className="mb-3">Milk Reports</h4>
@@ -104,6 +111,88 @@ export default function MilkEntryTable({ entries = [], onEdit, onRefresh }) {
           </thead>
 
           <tbody>
+  {entries.length === 0 ? (
+    <tr>
+      <td colSpan="11" className="text-center text-muted">
+        No entries found
+      </td>
+    </tr>
+  ) : (
+    Object.entries(
+      entries.reduce((acc, curr) => {
+        acc[curr.date] = acc[curr.date] || [];
+        acc[curr.date].push(curr);
+        return acc;
+      }, {})
+    )
+      // ✅ latest date first
+      .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+      .map(([date, rows]) =>
+        rows.map((e) => (
+          <tr key={e.id}>
+            <td>
+              <input
+                type="checkbox"
+                checked={selected.includes(e.id)}
+                onChange={() => toggleSelect(e.id)}
+              />
+            </td>
+
+            {/* date column stays SAME */}
+            <td>{e.date}</td>
+            <td>{e.shift}</td>
+            <td>{e.qty}</td>
+            <td>{e.fat}</td>
+            <td>{e.snf}</td>
+            <td>{e.clr}</td>
+            <td>{e.rate_per_litre}</td>
+            <td>₹{Number(e.amount).toFixed(2)}</td>
+            <td style={{ maxWidth: 200, whiteSpace: "pre-wrap" }}>
+              {e.note || "-"}
+            </td>
+            <td>
+              <button
+                className="btn btn-sm btn-warning me-1"
+                onClick={() => {
+                  onEdit(e);
+                  navigate("/");
+                }}
+              >
+                Edit
+              </button>
+
+              {confirmId === e.id ? (
+                <>
+                  <button
+                    className="btn btn-sm btn-danger me-1"
+                    onClick={() => deleteEntry(e.id)}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => setConfirmId(null)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => setConfirmId(e.id)}
+                >
+                  Delete
+                </button>
+              )}
+            </td>
+          </tr>
+        ))
+      )
+  )}
+</tbody>
+
+
+          {/* <tbody>
             {entries.length === 0 ? (
               <tr>
                 <td colSpan="11" className="text-center text-muted">
@@ -169,7 +258,7 @@ export default function MilkEntryTable({ entries = [], onEdit, onRefresh }) {
                 </tr>
               ))
             )}
-          </tbody>
+          </tbody> */}
         </table>
 
         {/* BULK DELETE */}
